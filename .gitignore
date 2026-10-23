@@ -1,0 +1,24 @@
+# Secrets and credentials
+.streamlit/secrets.toml
+.env
+.env.*
+!.env.example
+
+# Local databases and backups
+*.db
+*.sqlite
+*.sqlite3
+*.db-journal
+*.sqlite-journal
+
+# Python environments/cache
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+
+# OS/editor files
+.DS_Store
+Thumbs.db
+.vscode/
