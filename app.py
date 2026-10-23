@@ -362,12 +362,37 @@ html { font-size: 80% !important; }
 [data-testid="stSidebar"] [data-testid="stRadio"] [data-testid="stMarkdownContainer"] p { font-size: 1rem !important; }
 [data-testid="stSidebar"] div.stButton { margin: 0 0 5px 0; }
 [data-testid="stSidebar"] div.stButton { width: 100%; margin: 0 0 5px 0; }
+/* Robust sidebar navigation styling across Streamlit Cloud and local versions. */
+[data-testid="stSidebar"] [data-testid^="stBaseButton-"] ,
 [data-testid="stSidebar"] div.stButton > button,
-[data-testid="stSidebar"] div.stButton > button[kind="secondary"] { width: 100% !important; min-height: 38px !important; text-align: left !important; justify-content: flex-start !important; padding: 8px 12px !important; border: 1px solid transparent !important; border-radius: 8px !important; background: #111111 !important; color: #F7F7F7 !important; font-size: 1rem !important; font-weight: 600 !important; box-shadow: none !important; transition: background .15s ease, border-color .15s ease; }
-[data-testid="stSidebar"] div.stButton > button:hover,
-[data-testid="stSidebar"] div.stButton > button[kind="secondary"]:hover { background: #24201D !important; border-color: #4B3326 !important; color: #FFFFFF !important; }
-[data-testid="stSidebar"] div.stButton > button[kind="primary"] { background: #2A211B !important; border: 1px solid #F36F21 !important; border-left: 4px solid #F36F21 !important; color: #FFFFFF !important; }
-[data-testid="stSidebar"] div.stButton > button[kind="primary"]:hover { background: #34251C !important; }
+[data-testid="stSidebar"] div.stButton > button[kind="secondary"] {
+  width: 100% !important; min-height: 38px !important; height: auto !important;
+  text-align: left !important; justify-content: flex-start !important;
+  padding: 8px 12px !important; margin: 0 !important;
+  border: 1px solid #292929 !important; border-left: 4px solid transparent !important;
+  border-radius: 8px !important; background: #111111 !important;
+  color: #F7F7F7 !important; font-size: 1rem !important; font-weight: 600 !important;
+  box-shadow: none !important; opacity: 1 !important;
+  transition: background .15s ease, border-color .15s ease;
+}
+[data-testid="stSidebar"] [data-testid^="stBaseButton-"] *,
+[data-testid="stSidebar"] div.stButton > button * {
+  color: #F7F7F7 !important; opacity: 1 !important; text-align: left !important;
+}
+[data-testid="stSidebar"] [data-testid^="stBaseButton-"]:hover,
+[data-testid="stSidebar"] div.stButton > button:hover {
+  background: #24201D !important; border-color: #4B3326 !important;
+  border-left-color: #F36F21 !important; color: #FFFFFF !important;
+}
+[data-testid="stSidebar"] [data-testid="stBaseButton-primary"],
+[data-testid="stSidebar"] div.stButton > button[kind="primary"] {
+  background: #F36F21 !important; border: 1px solid #F36F21 !important;
+  border-left: 4px solid #FFB17F !important; color: #FFFFFF !important;
+}
+[data-testid="stSidebar"] [data-testid="stBaseButton-primary"] *,
+[data-testid="stSidebar"] div.stButton > button[kind="primary"] * { color: #FFFFFF !important; }
+[data-testid="stSidebar"] [data-testid="stBaseButton-primary"]:hover,
+[data-testid="stSidebar"] div.stButton > button[kind="primary"]:hover { background: #D9570B !important; }
 h1, h2, h3 { color: #151515; letter-spacing: -0.025em; }
 h1 { font-size: 1.48rem !important; margin-bottom: .3rem !important; }
 h2 { font-size: 1.16rem !important; }
