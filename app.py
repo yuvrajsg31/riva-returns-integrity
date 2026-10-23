@@ -361,14 +361,13 @@ html { font-size: 80% !important; }
 [data-testid="stSidebar"] [data-testid="stRadio"] [role="radio"] { display: none !important; }
 [data-testid="stSidebar"] [data-testid="stRadio"] [data-testid="stMarkdownContainer"] p { font-size: 1rem !important; }
 [data-testid="stSidebar"] div.stButton { margin: 0 0 5px 0; }
-[data-testid="stSidebar"] div[data-testid="stButton"] { width: 100%; margin: 0 0 5px 0 !important; }
-[data-testid="stSidebar"] div[data-testid="stButton"] > button { width: 100%; min-height: 38px; display: flex !important; align-items: center !important; justify-content: flex-start !important; text-align: left !important; padding: 8px 12px !important; border: 1px solid transparent; border-radius: 8px; background: transparent; color: #F7F7F7 !important; font-size: 1rem !important; font-weight: 600; transition: background .15s ease, border-color .15s ease; }
-[data-testid="stSidebar"] div[data-testid="stButton"] > button > div { width: 100% !important; flex: 1 1 auto !important; text-align: left !important; }
-[data-testid="stSidebar"] div[data-testid="stButton"] > button p { width: 100% !important; margin: 0 !important; text-align: left !important; }
-[data-testid="stSidebar"] div[data-testid="stButton"] > button span { text-align: left !important; }
-[data-testid="stSidebar"] div.stButton > button:hover { background: #24201D; border-color: #4B3326; }
-[data-testid="stSidebar"] div.stButton > button[kind="primary"] { background: #2A211B; border: 1px solid #F36F21; border-left: 4px solid #F36F21; color: #FFFFFF !important; }
-[data-testid="stSidebar"] div.stButton > button[kind="primary"]:hover { background: #34251C; }
+[data-testid="stSidebar"] div.stButton { width: 100%; margin: 0 0 5px 0; }
+[data-testid="stSidebar"] div.stButton > button,
+[data-testid="stSidebar"] div.stButton > button[kind="secondary"] { width: 100% !important; min-height: 38px !important; text-align: left !important; justify-content: flex-start !important; padding: 8px 12px !important; border: 1px solid transparent !important; border-radius: 8px !important; background: #111111 !important; color: #F7F7F7 !important; font-size: 1rem !important; font-weight: 600 !important; box-shadow: none !important; transition: background .15s ease, border-color .15s ease; }
+[data-testid="stSidebar"] div.stButton > button:hover,
+[data-testid="stSidebar"] div.stButton > button[kind="secondary"]:hover { background: #24201D !important; border-color: #4B3326 !important; color: #FFFFFF !important; }
+[data-testid="stSidebar"] div.stButton > button[kind="primary"] { background: #2A211B !important; border: 1px solid #F36F21 !important; border-left: 4px solid #F36F21 !important; color: #FFFFFF !important; }
+[data-testid="stSidebar"] div.stButton > button[kind="primary"]:hover { background: #34251C !important; }
 h1, h2, h3 { color: #151515; letter-spacing: -0.025em; }
 h1 { font-size: 1.48rem !important; margin-bottom: .3rem !important; }
 h2 { font-size: 1.16rem !important; }
@@ -1544,6 +1543,44 @@ if page == "Dashboard":
     except ImportError:
         plotly_ready = False
         st.warning("Plotly is required for the dashboard charts. Install it with: python -m pip install plotly")
+
+    if not filtered and plotly_ready:
+        # Keep the dashboard's chart-card layout visible on a fresh cloud deployment.
+        # Hosted Streamlit starts with a new local SQLite file, so empty charts are an
+        # honest empty state rather than silently substituting local/demo records.
+        import plotly.graph_objects as go
+        chart_config = {"displayModeBar": False, "responsive": True, "scrollZoom": False}
+        empty_layout = dict(
+            height=150, margin=dict(l=4, r=8, t=8, b=8),
+            paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+            font=dict(family="Arial, sans-serif", size=9, color="#666666"),
+            showlegend=False,
+            annotations=[dict(text="No saved cases yet", x=0.5, y=0.5, xref="paper", yref="paper",
+                              showarrow=False, font=dict(size=10, color="#888888"))]
+        )
+        empty_specs = []
+        for title, key in [
+            ("Cases by pattern", "riva_empty_cases_pattern"),
+            ("Cases by workflow status", "riva_empty_cases_status"),
+            ("Cases created per day", "riva_empty_cases_per_day"),
+        ]:
+            fig = go.Figure()
+            fig.update_layout(**empty_layout)
+            empty_specs.append((title, fig, key))
+        for col, (heading, figure, chart_key) in zip(st.columns(3, gap="small"), empty_specs):
+            with col:
+                with st.container(border=True):
+                    st.markdown(f"<div style='font-size:12px;font-weight:700;color:#222;margin:0 0 3px 0;min-height:18px'>{heading}</div>", unsafe_allow_html=True)
+                    st.plotly_chart(figure, use_container_width=True, config=chart_config, key=chart_key)
+        score_col, trend_col = st.columns([1, 2], gap="small")
+        with score_col:
+            with st.container(border=True):
+                st.markdown("<div style='font-size:12px;font-weight:700;color:#222;margin-bottom:4px'>Average rules-based risk score</div>", unsafe_allow_html=True)
+                st.caption("Available after investigations are saved.")
+        with trend_col:
+            with st.container(border=True):
+                st.markdown("<div style='font-size:12px;font-weight:700;color:#222;margin-bottom:4px'>Average risk score over time</div>", unsafe_allow_html=True)
+                st.caption("Import or create investigations to display a risk trend.")
 
     if filtered and plotly_ready:
         chart_config = {"displayModeBar": False, "responsive": True, "scrollZoom": False}
